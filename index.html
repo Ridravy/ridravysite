@@ -56,7 +56,7 @@
             overflow: hidden;
             background-color: #0a0a0a;
             border-bottom: 1px solid #333;
-            display: flex; /* Para alinhar melhor */
+            display: flex;
             flex-wrap: wrap;
         }
 
@@ -84,7 +84,6 @@
             border-bottom: 2px solid #ff0000;
         }
 
-        /* CLASSE PARA OCULTAR BOTÕES */
         .hidden-tab-btn {
             display: none;
         }
@@ -128,7 +127,6 @@
             box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
         }
 
-        /* Estilo do Login */
         .login-input {
             padding: 12px;
             font-size: 16px;
@@ -140,10 +138,7 @@
             text-align: center;
             margin-right: 10px;
         }
-        .login-input:focus {
-            outline: none;
-            border-color: #ff0000;
-        }
+        .login-input:focus { outline: none; border-color: #ff0000; }
 
         .login-btn {
             padding: 12px 25px;
@@ -155,9 +150,7 @@
             cursor: pointer;
             text-transform: uppercase;
         }
-        .login-btn:hover {
-            background: #c92a2a;
-        }
+        .login-btn:hover { background: #c92a2a; }
 
         /* =========================================
            ESTILO: CHAMADO PADRÃO
@@ -208,11 +201,16 @@
         .vale-carga-app .app-header-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
         .vale-carga-app .form-group { display: flex; flex-direction: column; }
         .vale-carga-app .form-group label { font-size: 0.8rem; margin-bottom: 0.3rem; color: var(--cor-texto-secundario-vc); font-weight: 500; }
-        .vale-carga-app input[type="text"] {
+        
+        .vale-carga-app input[type="text"], .vale-carga-app input[type="date"] {
             background-color: #2a2a2a; border: 1px solid var(--cor-borda-vc); color: var(--cor-texto-principal-vc);
             border-radius: var(--raio-borda-vc); padding: 0.6rem; font-size: 0.9rem; outline: none; text-align: center;
         }
-        .vale-carga-app input[type="text"]:focus { border-color: #ff3b3b; }
+        /* Ajuste para o ícone de calendário ficar bom no modo escuro */
+        .vale-carga-app input[type="date"] { color-scheme: dark; }
+
+        .vale-carga-app input[type="text"]:focus, .vale-carga-app input[type="date"]:focus { border-color: #ff3b3b; }
+        
         .vale-carga-app .table-container { max-height: 400px; overflow-y: auto; border: 1px solid var(--cor-borda-vc); border-radius: var(--raio-borda-vc); }
         .vale-carga-app table { width: 100%; border-collapse: collapse; }
         .vale-carga-app th, .vale-carga-app td { padding: 0.75rem; text-align: center; border-bottom: 1px solid #333; }
@@ -241,7 +239,6 @@
     <div class="tab-container">
         <div class="tab-buttons">
             <button class="tablinks" onclick="openTab(event, 'Home')" id="defaultOpen">Home</button>
-            
             <button class="tablinks" onclick="openTab(event, 'AreaCliente')">Área do Cliente</button>
 
             <button class="tablinks hidden-tab-btn" id="btnChamado" onclick="openTab(event, 'ChamadoPadrao')">Chamado Padrão</button>
@@ -301,10 +298,10 @@
             <div class="vale-carga-container">
                 <header class="app-header">
                     <div class="app-header-grid">
-                        <div class="form-group"><label for="vc_origem">Origem</label><input type="text" id="vc_origem" value="NTI SAMU"></div>
-                        <div class="form-group"><label for="vc_destino">Destino</label><input type="text" id="vc_destino" placeholder="Para onde vai o material"></div>
-                        <div class="form-group"><label for="vc_data">Data</label><input type="text" id="vc_data"></div>
-                        <div class="form-group"><label for="vc_ticket">Ticket (Opcional)</label><input type="text" id="vc_ticket" placeholder="Nº do chamado"></div>
+                        <div class="form-group"><label for="vc_origem">Origem</label><input type="text" id="vc_origem" value="NTI SAMU" maxlength="18"></div>
+                        <div class="form-group"><label for="vc_destino">Destino</label><input type="text" id="vc_destino" placeholder="Para onde vai o material" maxlength="18"></div>
+                        <div class="form-group"><label for="vc_data">Data</label><input type="date" id="vc_data"></div>
+                        <div class="form-group"><label for="vc_ticket">Ticket (Opcional)</label><input type="text" id="vc_ticket" placeholder="Nº do chamado" maxlength="18"></div>
                     </div>
                 </header>
                 <section class="app-body">
@@ -327,74 +324,46 @@
 
     <script>
         // --- LÓGICA DE SENHA E NAVEGAÇÃO ---
-        
-        // 1. Controle das Abas
         function openTab(evt, tabName) {
             var i, tabcontent, tablinks;
-            
-            // Esconde todo conteúdo
             tabcontent = document.getElementsByClassName("tabcontent");
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
             }
-            
-            // Tira classe 'active' de todos os botões
             tablinks = document.getElementsByClassName("tablinks");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
-            
-            // Mostra a aba desejada e ativa o botão
             document.getElementById(tabName).style.display = "block";
-            if(evt) {
-                evt.currentTarget.className += " active";
-            } else {
-                // Caso seja chamada via código (sem clique), tenta achar o botão pelo texto ou ID para ativar visualmente
-                // (Opcional para simplificar)
-            }
+            if(evt) evt.currentTarget.className += " active";
         }
 
-        // Abre a Home por padrão ao carregar
         document.getElementById("defaultOpen").click();
 
-        // 2. Lógica de Login
         function verificarSenha() {
             var senhaDigitada = document.getElementById("senhaInput").value;
             var msg = document.getElementById("msgLogin");
 
             if (senhaDigitada === "samu192@") {
-                // Senha CORRETA
                 msg.style.display = "block";
-                msg.style.color = "#28a745"; // Verde
+                msg.style.color = "#28a745"; 
                 msg.innerHTML = "Acesso Autorizado! Carregando ferramentas...";
-
-                // Mostra os botões ocultos removendo o display:none do CSS inline ou da classe
                 document.getElementById("btnChamado").style.display = "block";
                 document.getElementById("btnVale").style.display = "block";
-
-                // Limpa o campo
                 document.getElementById("senhaInput").value = "";
-
-                // (Opcional) Já abre a primeira ferramenta automaticamente após 1 segundo
                 setTimeout(function(){
-                    // Simula um clique no botão do chamado padrão para abrir a aba
                     document.getElementById("btnChamado").click();
                     msg.style.display = "none";
                 }, 800);
-
             } else {
-                // Senha INCORRETA
                 msg.style.display = "block";
-                msg.style.color = "#ff3b3b"; // Vermelho
+                msg.style.color = "#ff3b3b"; 
                 msg.innerHTML = "Senha Incorreta. Tente novamente.";
-                
-                // Treme a caixa de input (efeito visual simples)
                 var input = document.getElementById("senhaInput");
                 input.style.borderColor = "red";
                 setTimeout(() => { input.style.borderColor = "#444"; }, 500);
             }
         }
-
 
         // --- LÓGICA DO CHAMADO PADRÃO (GLPI) ---
         const glpiInput = document.getElementById('glpi_input');
@@ -469,21 +438,37 @@
             if (tbody.rows.length === 0) {
                 for (let i = 1; i <= NUMERO_DE_ITENS; i++) {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${i.toString().padStart(2, '0')}</td><td><input type="text" class="item-descricao" placeholder="Ex: Monitor, Teclado"></td><td><input type="text" class="item-tombo" placeholder="Ex: 123456"></td><td><input type="text" class="item-qtd" placeholder="Ex: 00"></td>`;
+                    // AQUI ESTÃO OS LIMITES DE QTD (maxlength=2) E TOMBO (maxlength=10)
+                    tr.innerHTML = `<td>${i.toString().padStart(2, '0')}</td>
+                                    <td><input type="text" class="item-descricao" placeholder="Ex: Monitor, Teclado"></td>
+                                    <td><input type="text" class="item-tombo" placeholder="Ex: 123456" maxlength="10"></td>
+                                    <td><input type="text" class="item-qtd" placeholder="00" maxlength="2"></td>`;
                     tbody.appendChild(tr);
                 }
-                dataInput.value = new Date().toLocaleDateString('pt-BR');
+                
+                // Preenche a data de hoje no formato correto para input type="date" (YYYY-MM-DD)
+                const hoje = new Date();
+                dataInput.value = hoje.toISOString().split('T')[0];
+
                 document.getElementById('vc_btn-generate').addEventListener('click', () => gerarPDF(coletarDados(), `VALECARGA_PREENCHIDO.pdf`));
                 document.getElementById('vc_btn-blank').addEventListener('click', () => gerarPDF(dadosEmBranco(), 'VALECARGA_PARA_PREENCHIMENTO.pdf'));
                 document.getElementById('vc_btn-clear').addEventListener('click', handleClearForm);
             }
 
             function coletarDados() {
+                // Formata a data para sair DD/MM/AAAA no PDF
+                let dataCrua = document.getElementById('vc_data').value;
+                let dataFormatada = dataCrua;
+                if(dataCrua.includes('-')) {
+                    const [ano, mes, dia] = dataCrua.split('-');
+                    dataFormatada = `${dia}/${mes}/${ano}`;
+                }
+
                 const dados = {
                     cabecalho: {
                         origem: document.getElementById('vc_origem').value.trim(),
                         destino: document.getElementById('vc_destino').value.trim(),
-                        data: document.getElementById('vc_data').value.trim(),
+                        data: dataFormatada,
                         ticket: document.getElementById('vc_ticket').value.trim() || '-----'
                     },
                     itens: []
